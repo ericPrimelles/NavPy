@@ -11,12 +11,18 @@ def qNetFC(input_shape, output_shape):
     
     # Hidden layers
     lyr1 = layers.Dense(32, activation='relu')(inputs)
+    lyr1 = layers.Dropout(0.5)(lyr1)
+    lyr1 = layers.BatchNormalization()(lyr1)
     lyr2 = layers.Dense(64, activation='relu')(lyr1)
+    lyr2 = layers.Dropout(0.5)(lyr2)
+    lyr2 = layers.BatchNormalization()(lyr2)
     lyr3 = layers.Dense(32, activation='relu')(lyr2)
+    lyr3 = layers.Dropout(0.5)(lyr3)
+    lyr3 = layers.BatchNormalization()(lyr3)
     
     #Output
     action = layers.Dense(output_shape, activation='linear')(lyr3)
-    
+    action = layers.UnitNormalization()(action)
     return keras.Model(inputs=inputs, outputs=action)
 
 def DDPGActor(input_shape, output_shape):
