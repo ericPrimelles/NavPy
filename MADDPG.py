@@ -226,7 +226,7 @@ class MADDPG:
                 
                 
                 q_values = agnt['q_n']([obs, acts_],training=True)
-                loss = tf.math.reduce_mean(q_values)
+                loss = -tf.math.reduce_mean(q_values)
                     
                     
                     
