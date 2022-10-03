@@ -11,7 +11,7 @@ from Env import DeepNav
 from replayBuffer import ReplayBuffer
 from utils import flatten
 from NNmodels import DDPGActor, DDPGCritic
-
+from joblib import dump
 
 class MADDPG:
     
@@ -113,16 +113,17 @@ class MADDPG:
         for i in range(self.n_epochs):
             for j in range(self.n_episodes):
                 s = self.env.reset()
-                reward = 0
+                reward = []
+                rewards = []
                 ts = 0
                 H=500
-                
+                print(f'Episode {j} started')
                 while 1:
                     
                     
                     a = self.policy(s)
                     s_1, r, done = self.env.step(a)
-                    
+                    reward.append(r)
                     self.rb.store(s, a, r, s_1, done)
                     
                     if self.rb.ready:
@@ -131,18 +132,22 @@ class MADDPG:
                     s = s_1
                     ts +=1
                     
-                    fmt = '*' * int(ts*10/H)
-                    print(f'Epoch {i + 1} Episode {j + 1} |{fmt}| -> {ts}')
+                    #fmt = '*' * int(ts*10/H)
+                    #print(f'Epoch {i + 1} Episode {j + 1} |{fmt}| -> {ts}')
                     if done == 1 or ts > H:
-                        print(f'Epoch {i + 1} Episode {j + 1} ended after {ts} timesteps')
+                        
+                        rwd = np.mean(reward)
+                        print(f'Epoch {i + 1} Episode {j + 1} ended after {ts} timesteps with reward {rwd}')
+                        rewards.append(rwd)
+                        reward = []
                         ts=0
                         break
                     
                     
-                if i % 10 == 0:
-                    self.save()
+                dump(rewards, self.path + f'Rewards_epoch_{i}.joblib')
+                self.save()
                 #print(f'Epoch: {i + 1} / {self.n_epochs} Episode {j + 1} / {self.n_episodes} Reward: {reward / ts}')        
-                  
+        return rewards  
           
     def _learn(self, sampledBatch):
         s, a, r, s_1, dones = sampledBatch
@@ -232,13 +237,15 @@ class MADDPG:
             opt.apply_gradients(zip(actorGrad, agnt['a_n'].trainable_variables))
             
                               
+  
+                              
             
             
         
         
 if __name__ == '__main__':
     
-     env = DeepNav(3, 0)
+     env = DeepNav(5, 0)
      p = MADDPG(env)
      
-     p.Train()   
+     r = p.Train()   

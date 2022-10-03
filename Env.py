@@ -171,7 +171,8 @@ class DeepNav():
     def setPrefferedVel(self, actions: np.float32) -> None:
         
         for i in range(self.n_agents):
-            self.sim.setAgentPrefVelocity(i, tuple(actions[i]))
+            act = actions[i] * 1 / np.linalg.norm(actions[1])
+            self.sim.setAgentPrefVelocity(i, tuple(act))
             
     def getStateSpec(self):
         return self.__state.shape

@@ -22,7 +22,7 @@ def qNetFC(input_shape, output_shape):
     
     #Output
     action = layers.Dense(output_shape, activation='linear')(lyr3)
-    action = layers.UnitNormalization()(action)
+    action = layers.BatchNormalization()(action)
     return keras.Model(inputs=inputs, outputs=action)
 
 def DDPGActor(input_shape, output_shape):
@@ -53,7 +53,7 @@ def DDPGCritic(input_obs, input_action):
     return keras.Model(inputs,output) 
 
 if __name__ == '__main__':
-    
-    model = qNetFC((10, 10, 3), 2)
-    #print(type(model))
+    import numpy as np
+    model = qNetFC(3, 2)
+    print(model(np.random.random((1, 3))))    
     
