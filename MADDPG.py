@@ -137,7 +137,7 @@ class MADDPG:
                     if done == 1 or ts > H:
                         
                         rwd = np.mean(reward)
-                        print(f'Epoch {i + 1} Episode {j + 1} ended after {ts} timesteps with reward {rwd}')
+                        print(f'Epoch {i + 1} Episode {j + 1} ended after {ts} timesteps with reward {np.mean(rwd)}')
                         rewards.append(rwd)
                         reward = []
                         ts=0

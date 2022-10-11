@@ -171,7 +171,10 @@ class DeepNav():
     def setPrefferedVel(self, actions: np.float32) -> None:
         
         for i in range(self.n_agents):
-            act = actions[i] * 1 / np.linalg.norm(actions[1])
+            act = self.max_speed * actions[i] * 1 / np.linalg.norm(actions[1])
+            
+            if np.abs(self.getAgentPos(i)[0] + act[0] * self.timestep) > 512 or np.abs(self.getAgentPos(i)[1] + act[1] * self.timestep) > 512:
+                return
             self.sim.setAgentPrefVelocity(i, tuple(act))
             
     def getStateSpec(self):

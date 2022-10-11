@@ -49,7 +49,7 @@ def DDPGCritic(input_obs, input_action):
     # output layer(actions)
     output_ = layers.Dense(1, kernel_initializer=GlorotNormal(), kernel_regularizer=l2(0.01))(h2)
     output_b = layers.BatchNormalization()(output_)
-    output = layers.Activation('linear')(output_b)
+    output = layers.Activation('relu')(output_b)
     return keras.Model(inputs,output) 
 
 if __name__ == '__main__':
